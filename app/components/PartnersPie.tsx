@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import Link from "next/link";
 
 // Register required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -31,7 +32,7 @@ const PieChart: React.FC<PieChartProps> = ({ showText }) => {
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const response = await fetch("/api/partners"); // Replace with your API route
+        const response = await fetch("/api/partners");
         const partners: Partner[] = await response.json();
 
         // Count active and inactive partners
@@ -64,10 +65,13 @@ const PieChart: React.FC<PieChartProps> = ({ showText }) => {
         <div className="text-sm text-gray-500">
             Total Partners: {count}
         </div>
-      <div className="w-full mx-auto">
+      <div className="mx-auto">
         <Pie data={chartData} />
       </div>
-      {showText && <button className="text-green-700 font-bold text-right">View all</button> }
+      {showText && 
+        <Link href="/partners" className="text-right">
+          <button className="text-green-700 font-bold">View all</button> 
+        </Link> }
     </div>
   );
 };

@@ -13,6 +13,11 @@ export interface IOrder{
   updatedAt: Date;
 }
 
+export interface OrdersArea {
+  count: number;
+  area: string;
+}
+
 // 2️⃣ Define Mongoose Schema
 const OrderSchema = new Schema<IOrder>(
   {

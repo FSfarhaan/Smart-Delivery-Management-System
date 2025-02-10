@@ -16,7 +16,6 @@ const AssignmentTable = () => {
   const [orderNumbers, setOrderNumbers] = useState<string[]>([]); // Explicitly set as an array of strings
   const pathName = usePathname();
 
-
   const getOrderNumber = async (id: string) => {
     try {
       const res = await axios.get(`/api/orders/getById/${id}`);
@@ -52,20 +51,20 @@ const AssignmentTable = () => {
   return (
     <table className="w-full">
       <thead>
-        <tr className="text-gray-500">
+        <tr className="text-gray-500 md:text-md text-sm" >
           <th className="text-left pb-4">Order Number</th>
           <th className="text-left pb-4">Status</th>
           <th className="text-left pb-4">Date</th>
-          <th className="text-right pb-4">assigned to</th>
+          <th className="text-right pb-4">Assigned to</th>
         </tr>
       </thead>
       <tbody>
         {assignments.map((assignment: any, index) => (
-          <tr key={assignment._id} className="border-t">
-            <td className="py-3">{orderNumbers.at(index)}</td>
-            <td>
+          <tr key={assignment._id} className="border-t md:text-md text-sm">
+            <td className="py-3 pr-16">{orderNumbers.at(index)}</td>
+            <td className="pr-12">
               <span
-                className={`px-2 py-1 rounded-full text-sm ${
+                className={`px-2 py-1 rounded-full text-sm whitespace-nowrap ${
                     assignment.status === "pending"
                     ? "bg-blue-100 text-blue-700" // Yellow for pending
                     : assignment.status === "success"
@@ -76,7 +75,7 @@ const AssignmentTable = () => {
                 {assignment.status === "success" ? "delivered" : assignment.status === "pending" ? "on the way" : assignment.status}
               </span>
             </td>
-            <td>{new Date(assignment.timestamp).toLocaleDateString()}</td>
+            <td className="pr-10">{new Date(assignment.timestamp).toLocaleDateString()}</td>
             <td className="text-right">{assignment.partnerId || "N/A"}</td>
           </tr>
         ))}

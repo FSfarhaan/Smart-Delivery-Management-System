@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://192.168.162.209:3000";
 
 // ✅ Fetch all orders
 export const fetchOrders = async () => {
@@ -30,3 +30,8 @@ export const deleteOrder = async (orderId: string) => {
   const response = await axios.delete(`${API_BASE_URL}/api/orders/${orderId}`);
   return response.data;
 };
+
+export const getOrderAreas = async () => {
+  const response = await axios.get(`${API_BASE_URL}/api/orders/getAreas`);
+  return response.data;
+}

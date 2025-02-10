@@ -2,18 +2,10 @@
 
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { PartnersArea } from "@/models/Partner";
 
-// Register the necessary chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-interface BarChartProps {
-  data: PartnersArea[];
-  type: String;
-}
-
-
-const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
+const BarChart = ({ data, type }: { data: any[], type: string }) => {
   // Prepare the data for Chart.js
   const chartData = {
     labels: data.map((item) => item.area[0]), // Areas as labels
@@ -48,9 +40,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
   };
 
   return (
-        <div className="bg-white p-4 rounded-lg shadow h-64">
-            {data && <Bar data={chartData} options={chartOptions} width={100} height={100} /> }
-        </div>
+    <div className="bg-white p-4 rounded-lg shadow">
+      {data && <Bar data={chartData} options={chartOptions} width={100} height={100} /> }
+    </div>
   ) 
 };
 
