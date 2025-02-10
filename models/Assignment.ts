@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
-export interface IAssignment extends Document {
+export interface IAssignment {
   orderId: Types.ObjectId;
   partnerId: Types.ObjectId;
   timestamp: Date;
@@ -12,7 +12,7 @@ const AssignmentSchema = new Schema<IAssignment>({
   orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order", required: true },
   partnerId: { type: mongoose.Schema.Types.ObjectId, ref: "Partner", required: true },
   timestamp: { type: Date, default: Date.now },
-  status: { type: String, enum: ["pending", "success", "failed"], required: true }, // ✅ Fixed Enum
+  status: { type: String, enum: ["pending", "success", "failed"], required: true },
   reason: { type: String, required: false },
 });
 

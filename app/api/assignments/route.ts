@@ -6,7 +6,7 @@ import Assignment from "@/models/Assignment";
 export async function GET() {
   try {
     await connectDB();
-    const assignments = await Assignment.find();
+    const assignments = await Assignment.find().sort({ createdAt: -1 });
     return NextResponse.json(assignments);
   } catch (error) {
     return NextResponse.json({ message: "Error fetching assignments", error }, { status: 500 });

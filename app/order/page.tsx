@@ -68,7 +68,7 @@ interface StatCard {
     };
   
     return (
-      <div className="min-h-screen bg-gray-50 text-black">
+      <>
         {/* Header */}
         <header className="bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,7 +190,7 @@ interface StatCard {
             </div>
           </div>
         </main>
-      </div>
+      </>
     );
   };
   

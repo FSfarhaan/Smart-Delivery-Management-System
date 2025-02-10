@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // 1️⃣ Define TypeScript Interface
-export interface IPartner extends Document {
+export interface IPartner {
+  _id: string;
   name: string;
   email: string;
   phone: string;
@@ -10,6 +11,11 @@ export interface IPartner extends Document {
   areas: string[];
   shift: { start: string; end: string };
   metrics: { rating: number; completedOrders: number; cancelledOrders: number };
+}
+
+export interface PartnersArea {
+  count: number;
+  area: string[];
 }
 
 // 2️⃣ Define Mongoose Schema

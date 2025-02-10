@@ -10,7 +10,11 @@ interface Partner {
   status: "active" | "inactive";
 }
 
-const PartnerStatusChart: React.FC = () => {
+interface PieChartProps {
+  showText: boolean;
+}
+
+const PieChart: React.FC<PieChartProps> = ({ showText }) => {
   const [chartData, setChartData] = useState({
     labels: ["Active", "Inactive"],
     datasets: [
@@ -63,9 +67,9 @@ const PartnerStatusChart: React.FC = () => {
       <div className="w-full mx-auto">
         <Pie data={chartData} />
       </div>
-      <button className="text-green-700 font-bold text-right">View all</button>
+      {showText && <button className="text-green-700 font-bold text-right">View all</button> }
     </div>
   );
 };
 
-export default PartnerStatusChart;
+export default PieChart;

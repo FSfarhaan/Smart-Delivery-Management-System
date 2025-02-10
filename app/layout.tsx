@@ -1,21 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { PartnerProvider } from "@/context/PartnerContext";
-import { OrderProvider } from "@/context/OrderContext";
-import { AssignmentProvider } from "@/context/AssignmentContext";
 import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,14 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <PartnerProvider>
-          <OrderProvider>
             <Sidebar />
-            <div className="ml-64">
-            <AssignmentProvider>{children}</AssignmentProvider>
+            <div className="ml-64 min-h-screen bg-gray-100 text-black">
+              {children}
             </div>
-          </OrderProvider>
-        </PartnerProvider>
       </body>
     </html>
   );

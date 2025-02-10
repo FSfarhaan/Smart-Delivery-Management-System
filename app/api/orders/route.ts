@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
 import Partner from "@/models/Partner";
-import Assignment from "@/models/Assignment"; // ✅ Import Assignment Model
-import NodeGeocoder from "node-geocoder";
-import { getCoordinates } from "@/utils/geocode";
+import Assignment from "@/models/Assignment";
+import { getBatchCoordinates } from "@/utils/geocode";
 
 async function autoAssignPartner(orderArea: string) {
   await connectDB();
@@ -16,35 +15,19 @@ async function autoAssignPartner(orderArea: string) {
   return availablePartners.length ? availablePartners[0] : null;
 }
 
-const geocoder = NodeGeocoder({
-    provider: "openstreetmap",
-});
-
-
 export async function GET() {
-    try {
-      await connectDB();
-      const orders = await Order.find().sort({ createdAt: -1 });
-  
-      if (!orders) {
-        return NextResponse.json({ message: "Cannot get order" }, { status: 404 });
-      }
-  
-      // Add lat/lng to each order
-      const ordersWithCoordinates = await Promise.all(
-        orders.map(async (order) => {
-          const coords = await getCoordinates(order.area);
-          return {
-            ...order.toObject(), // Convert Mongoose document to plain object
-            coordinates: coords,  // Add coordinates field
-          };
-        })
-      );
-  
-      return NextResponse.json(ordersWithCoordinates);
-    } catch (error) {
-      return NextResponse.json({ message: "Error getting order", error }, { status: 500 });
+  try {
+    await connectDB();
+    const orders = await Order.find().sort({ createdAt: -1 });
+
+    if (!orders) {
+      return NextResponse.json({ message: "Cannot get order" }, { status: 404 });
     }
+    return NextResponse.json(orders);
+
+  } catch (error) {
+    return NextResponse.json({ message: "Error getting order", error }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {

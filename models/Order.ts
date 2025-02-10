@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // 1️⃣ Define TypeScript Interface
-export interface IOrder extends Document {
+export interface IOrder{
   orderNumber: string;
   customer: { name: string; phone: string; address: string };
   area: string;
   items: { name: string; quantity: number; price: number }[];
-  status: "pending" | "assigned" | "picked" | "delivered";
+  status: "pending" | "assigned" | "picked" | "delivered" | "failed";
   assignedTo?: string; // Partner ID
   totalAmount: number;
   createdAt: Date;
@@ -30,7 +30,7 @@ const OrderSchema = new Schema<IOrder>(
         price: { type: Number, required: true },
       },
     ],
-    status: { type: String, enum: ["pending", "assigned", "picked", "delivered"], default: "pending" },
+    status: { type: String, enum: ["pending", "assigned", "picked", "delivered", "failed"], default: "pending" },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Partner" },
     totalAmount: { type: Number, required: true },
   },

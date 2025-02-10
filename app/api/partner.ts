@@ -19,3 +19,8 @@ export const updatePartner = async (partnerId: string, updateData: any) => {
   const response = await axios.put(`${API_BASE_URL}/api/partners/${partnerId}`, updateData);
   return response.data;
 };
+
+export const getPartnersArea = async () => {
+  const response = await axios.get(`${API_BASE_URL}/api/partners/getAreas`);
+  return response.data;
+}

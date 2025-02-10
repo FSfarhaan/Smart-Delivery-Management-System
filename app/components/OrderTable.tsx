@@ -5,14 +5,14 @@ interface IOrder {
   customer: { name: string; phone: string; address: string };
   area: string;
   items: { name: string; quantity: number; price: number }[];
-  status: "pending" | "assigned" | "picked" | "delivered";
+  status: "pending" | "assigned" | "picked" | "delivered" | "failed";
   assignedTo?: string; // Partner ID
   totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const OrderTable = ({ orders }: { orders: IOrder[] }) => {
+const OrderTable = ({ orders, type, openEditModal }: { orders: IOrder[], type: string, openEditModal: any }) => {
   return (
     <table className="w-full">
       <thead>

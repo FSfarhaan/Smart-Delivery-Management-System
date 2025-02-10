@@ -1,16 +1,39 @@
-import NodeGeocoder from "node-geocoder";
 import fetch from 'node-fetch';
 
-const geocoder = NodeGeocoder({
-  provider: "openstreetmap",
-  fetch: fetch
-});
+export const getBatchCoordinates = async (areas: any) => {
+  try {
+    // Make all requests in parallel using Promise.all
+    const promises = areas.map(async (area: any) => {
+      try {
+        const coords = await getCoordinates(area);
+        return { area, coords };
+      } catch (err) {
+        console.error("Error geocoding area:", area, err);
+        return { area, coords: null };
+      }
+    });
+
+    const results = await Promise.all(promises);
+
+    // Convert the results into an object for easy lookup
+    const areaCoordinates = results.reduce((acc, { area, coords }) => {
+      acc[area] = coords;
+      return acc;
+    }, {});
+
+    return areaCoordinates;
+  } catch (err) {
+    console.error("Error in batch geocoding:", err);
+    return {};
+  }
+};
 
 export const getCoordinates = async (location: string) => {
   try {
-    const res = await geocoder.geocode(location);
-    if (res.length > 0) {
-      return { lat: res[0].latitude, lng: res[0].longitude };
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+    const data: any = await res.json();
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
     return null;
   } catch (error) {

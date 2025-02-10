@@ -8,6 +8,11 @@ export const fetchOrders = async () => {
   return response.data;
 };
 
+export const fetchOrdersLoc = async () => {
+  const response = await axios.get(`${API_BASE_URL}/api/orders/getOrdersLoc`);
+  return response.data
+}
+
 // ✅ Create a new order
 export const createOrder = async (orderData: any) => {
   const response = await axios.post(`${API_BASE_URL}/api/orders`, orderData);

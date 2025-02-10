@@ -3,7 +3,8 @@ import { connectDB } from "@/lib/db";
 import Partner from "@/models/Partner";
 
 // ✅ UPDATE Partner by ID
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     await connectDB();
     const body = await req.json();
@@ -16,7 +17,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // ✅ DELETE Partner by ID
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     await connectDB();
     const deletedPartner = await Partner.findByIdAndDelete(params.id);
