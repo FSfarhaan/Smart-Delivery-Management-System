@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import { fetchAssignments } from "../api/assignments";
 import { usePathname } from "next/navigation";
 import { ObjectId } from "mongoose";
+import { IAssignment } from "@/models/Assignment";
 
 interface assignmentProps  {
     _id: string;
-    orderId: string;
-    partnerId: string;
+    orderId: ObjectId;
+    partnerId: ObjectId;
     timestamp: Date,
     status: string;
 }
@@ -32,10 +33,10 @@ const AssignmentTable = () => {
       try {
         const data = await fetchAssignments();
         if(pathName === "/assignments")
-            setAssignments(data.sort((a: any, b: any) => b.timestamp - a.timestamp));
-        else setAssignments(data.slice(0, 3).sort((a: any, b: any) => a.timestamp - b.timestamp));
+            setAssignments(data);
+        else setAssignments(data.slice(0, 3));
   
-        const orderNumbersPromises = data.map((d: any) =>
+        const orderNumbersPromises = data.map((d: assignmentProps) =>
           getOrderNumber(d.orderId)
         );
         const resolvedOrderNumbers = await Promise.all(orderNumbersPromises);
@@ -47,7 +48,7 @@ const AssignmentTable = () => {
     };
   
     fetchData();
-  }, [fetchAssignments]); // Include dependencies if needed
+  }, [fetchAssignments, pathName]); // Include dependencies if needed
   
   return (
     <table className="w-full">
@@ -60,7 +61,7 @@ const AssignmentTable = () => {
         </tr>
       </thead>
       <tbody>
-        {assignments.map((assignment: any, index) => (
+        {assignments.map((assignment: assignmentProps, index) => (
           <tr key={assignment._id} className="border-t md:text-md text-sm">
             <td className="py-3 pr-16">{orderNumbers.at(index)}</td>
             <td className="pr-12">
@@ -77,7 +78,7 @@ const AssignmentTable = () => {
               </span>
             </td>
             <td className="pr-10">{new Date(assignment.timestamp).toLocaleDateString()}</td>
-            <td className="text-right">{assignment.partnerId || "N/A"}</td>
+            <td className="text-right">{assignment.partnerId.toString() || "N/A"}</td>
           </tr>
         ))}
       </tbody>

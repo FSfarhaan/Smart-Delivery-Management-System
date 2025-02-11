@@ -1,6 +1,5 @@
+import { IAssignment } from "@/models/Assignment";
 import axios from "axios";
-
-
 
 // ✅ Fetch all assignments
 export const fetchAssignments = async () => {
@@ -14,7 +13,7 @@ export const fetchAssignmentMetrics = async () => {
   return response.data;
 };
 
-export const createManually = async (data: any) => {
+export const createManually = async (data: IAssignment) => {
   const response  = await axios.post(`/api/assignments/manuallyAssign`, data);
   return response.data;
 }

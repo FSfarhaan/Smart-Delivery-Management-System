@@ -5,10 +5,17 @@ import { Icon, LatLngExpression } from 'leaflet'; // No need for custom Icon imp
 import MarkerCluster from 'react-leaflet-markercluster'; // For clustering markers
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
+import { IOrder } from "@/models/Order";
 
-
+export interface OrderWithCoord {
+  orders: IOrder[],
+  coordinates : {
+    lat: number;
+    lng: number;
+  }
+}
 // Define your MapComponent accepting orders as a prop
-const MapComponent = ({ orders }: { orders: any[] }) => {
+const MapComponent = ({ orders }: { orders: IOrder[] }) => {
   const [loadedOrders, setLoadedOrders] = useState(orders);
 
   useEffect(() => {
@@ -17,7 +24,7 @@ const MapComponent = ({ orders }: { orders: any[] }) => {
 
   // Use useMemo to only recalculate filtered orders when necessary
   const validOrders = useMemo(() => {
-    return loadedOrders.filter(order => order.coordinates?.lat && order.coordinates?.lng);
+    return loadedOrders?.filter((order) => order.coordinates?.lat && order.coordinates?.lng);
   }, [loadedOrders]);
 
   return (
@@ -26,7 +33,7 @@ const MapComponent = ({ orders }: { orders: any[] }) => {
 
       {/* Add MarkerClusterGroup to group markers at the same location */}
       <MarkerCluster>
-        {validOrders.map((order) => (
+        {validOrders?.map((order) => (
           <Marker
             key={order.orderNumber}
             position={order.coordinates as LatLngExpression}

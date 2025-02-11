@@ -8,7 +8,7 @@ export interface IPartner {
   phone: string;
   status: "active" | "inactive";
   currentLoad: number; // max: 3
-  areas: string[];
+  area: string[];
   shift: { start: string; end: string };
   metrics: { rating: number; completedOrders: number; cancelledOrders: number };
 }
@@ -25,7 +25,7 @@ const PartnerSchema = new Schema<IPartner>({
   phone: { type: String, required: true },
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   currentLoad: { type: Number, required: true, default: 0, max: 3 },
-  areas: { type: [String], required: true },
+  area: { type: [String], required: true },
   shift: {
     start: { type: String, required: true },
     end: { type: String, required: true },

@@ -1,7 +1,11 @@
+import { IOrder } from "@/models/Order";
 import axios from "axios";
 import { Types } from "mongoose";
 
-
+export interface orderProps {
+  status: string;
+  reason: string;
+}
 
 // ✅ Fetch all orders
 export const fetchOrders = async () => {
@@ -15,13 +19,13 @@ export const fetchOrdersLoc = async () => {
 }
 
 // ✅ Create a new order
-export const createOrder = async (orderData: any) => {
+export const createOrder = async (orderData: IOrder) => {
   const response = await axios.post(`/api/orders`, orderData);
   return response.data;
 };
 
 // ✅ Update order status
-export const updateOrder = async (id: Types.ObjectId, updateData: any) => {
+export const updateOrder = async (id: Types.ObjectId, updateData: orderProps) => {
   const response = await axios.put(`/api/orders/${id}`, updateData);
   return response.data;
 };

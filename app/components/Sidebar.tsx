@@ -1,5 +1,5 @@
 import React from "react";
-import { LogOut, LayoutGrid, Users, Package, ClipboardCheck, Truck, Route } from "lucide-react";
+import { LayoutGrid, Users, Package, ClipboardCheck, Route } from "lucide-react";
 import Link from "next/link";
 
 interface SidebarProps {

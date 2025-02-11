@@ -2,10 +2,12 @@
 
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { IOrder, OrdersArea } from "@/models/Order";
+import { IPartner, PartnersArea } from "@/models/Partner";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarChart = ({ data, type }: { data: any[], type: string }) => {
+const BarChart = ({ data, type }: { data: OrdersArea[] | PartnersArea[], type: string }) => {
   // Prepare the data for Chart.js
   const chartData = {
     labels: data.map((item) => item.area[0]), // Areas as labels

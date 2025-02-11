@@ -2,11 +2,13 @@ import React from 'react';
 import { IOrder } from '@/models/Order';
 import { Types } from 'mongoose';
 
-const OrderTable = ({ orders, openAssignModal, openMarkModal }: { orders: IOrder[], openAssignModal: any, openMarkModal: any }) => {
+const OrderTable = ({ orders, openAssignModal, openMarkModal }: { orders: IOrder[], openAssignModal: (order: Types.ObjectId) => void, openMarkModal: (order: Types.ObjectId) => void }) => {
 
   const openModal  = (assigned: boolean, order: Types.ObjectId | null) => {
-    if(assigned) openMarkModal(order);
-    else openAssignModal(order);
+    if(order) {
+      if(assigned) openMarkModal(order);
+      else openAssignModal(order);
+    }
   }
   return (
     <table className="w-full">

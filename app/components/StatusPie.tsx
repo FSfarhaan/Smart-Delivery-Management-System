@@ -12,12 +12,19 @@ import { useEffect, useState } from "react";
 import { fetchOrders } from "../api/order";
 import { fetchAssignments } from "../api/assignments";
 import { usePathname } from "next/navigation";
+import { IAssignment } from "@/models/Assignment";
+import { IOrder } from "@/models/Order";
+import { ChartData } from "chart.js";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
+interface chartProps {
+
+}
+
 const OrdersPieChart = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [chartData, setChartData] = useState<any>(null);
+  const [data, setData] = useState<IAssignment[] | IOrder[]>([]);
+  const [chartData, setChartData] = useState<ChartData<'pie'> | null>(null);
 
   const pathname = usePathname();
   const isAssignmentsPage = pathname === "/assignments";
@@ -36,7 +43,7 @@ const OrdersPieChart = () => {
   useEffect(() => {
     if (data.length === 0) return;
 
-    const statusCount = data.reduce((acc: Record<string, number>, item: any) => {
+    const statusCount = data.reduce((acc: Record<string, number>, item: IAssignment | IOrder) => {
       acc[item.status] = (acc[item.status] || 0) + 1;
       return acc;
     }, {});

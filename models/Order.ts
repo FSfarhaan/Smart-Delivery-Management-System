@@ -12,6 +12,10 @@ export interface IOrder{
   totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
+  reason?: string;
+  coordinates: {
+    lat: number; lng: number;
+  }
 }
 
 export interface OrdersArea {
@@ -39,6 +43,10 @@ const OrderSchema = new Schema<IOrder>(
     status: { type: String, enum: ["pending", "assigned", "picked", "delivered", "failed"], default: "pending" },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Partner" },
     totalAmount: { type: Number, required: true },
+    coordinates: {
+      lat: {type: Number}, lng: {type: Number}
+    },
+    reason: { type: String }
   },
   { timestamps: true }
 );

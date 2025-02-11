@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
@@ -6,22 +6,26 @@ if (!MONGODB_URI) {
   throw new Error("MongoDB URI is missing in .env file");
 }
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
+// Extend global object to include mongoose cache
+declare global {
+  var mongoose: { conn: Mongoose | null; promise: Promise<Mongoose> | null };
+}
 
-export async function connectDB() {
-  if (cached.conn) return cached.conn;
+// Use globalThis to prevent type errors
+globalThis.mongoose = globalThis.mongoose || { conn: null, promise: null };
 
-  if (!cached.promise) {
-    cached.promise = mongoose
+export async function connectDB(): Promise<Mongoose> {
+  if (globalThis.mongoose.conn) return globalThis.mongoose.conn;
+
+  if (!globalThis.mongoose.promise) {
+    globalThis.mongoose.promise = mongoose
       .connect(MONGODB_URI, {
         dbName: "smart-delivery", // Database Name
         bufferCommands: false,
       })
-      .then((mongoose) => {
-        return mongoose;
-      });
+      .then((mongoose) => mongoose);
   }
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+  globalThis.mongoose.conn = await globalThis.mongoose.promise;
+  return globalThis.mongoose.conn;
 }

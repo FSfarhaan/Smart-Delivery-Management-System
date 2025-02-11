@@ -13,6 +13,6 @@ export async function GET() {
 
     return NextResponse.json(areas);
   } catch (error) {
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong" + error }, { status: 500 });
   }
 }

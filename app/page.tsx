@@ -6,24 +6,30 @@ import PieChart from "@/app/components/PartnersPie";
 import Navbar from "./components/Navbar";
 import OrdersPieChart from "./components/StatusPie";
 import AssignmentTable from "./components/AssignmentTable";
-import MapComponent from "./components/MapComponent";
+import MapComponent, { OrderWithCoord } from "./components/MapComponent";
 import Link from "next/link";
 import Sidebar from "./components/Sidebar";
+import { IOrder } from "@/models/Order";
 
 const Dashboard: FC = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<IOrder[]>();
   const [totalAmount, setTotalAmount] = useState(0);
   const [receivedAmount, setReceivedAmount] = useState(0);
 
   useEffect(() => {
     fetchOrdersLoc()
-      .then((data: any) => {
+      .then((data: IOrder[]) => {
         setOrders(data);
-        const totalAmount = Math.floor (data.reduce((total: number, order: any) => total + order.totalAmount, 0));
-        const filteredArr = data.filter((da: any) => da.status === "delivered");
-        const receivedAmount = Math.floor( filteredArr.reduce((total: number, order: any) => total + order.totalAmount, 0));
+        const totalAmount = Math.floor (data?.reduce((total: number, order: IOrder) => total + order.totalAmount, 0));
+        const filteredArr = data?.filter((da: IOrder) => da.status === "delivered");
+        const receivedAmount = Math.floor( filteredArr?.reduce((total: number, order: IOrder) => total + order.totalAmount, 0));
         setTotalAmount(totalAmount);
         setReceivedAmount(receivedAmount);
+
+        console.log(data);
+        console.log(totalAmount);
+        console.log(receivedAmount);
+
       })
       .catch((error) => console.log("Error fetching orders:", error));
 
@@ -44,7 +50,7 @@ const Dashboard: FC = () => {
                   <span className="text-gray-600">Total Orders</span>
                   <span className="text-sm text-green-500">+5%</span>
                 </div>
-                <div className="text-2xl font-bold">{orders.length}</div>
+                <div className="text-2xl font-bold">{orders?.length}</div>
                 <div className="text-sm text-gray-500">+500 than last month</div>
               </div>
 
@@ -53,7 +59,7 @@ const Dashboard: FC = () => {
                   <span className="text-gray-600">Orders delivered</span>
                   <span className="text-sm text-red-500">-2%</span>
                 </div>
-                <div className="text-2xl font-bold">{orders.filter((order: any) => order.status === "delivered").length}</div>
+                <div className="text-2xl font-bold">{orders?.filter((order: IOrder) => order.status === "delivered").length}</div>
                 <div className="text-sm text-gray-500">-200 than last month</div>
               </div>
 
@@ -91,9 +97,10 @@ const Dashboard: FC = () => {
                   </Link>
                 </div>
                 <div className="flex-1" style={{zIndex: 1}}>
+                  {orders &&
                     <MapComponent
-                      orders={orders.filter((o: any) => o.status === "assigned")}
-                    />
+                      orders={orders?.filter((o: IOrder) => o.status === "assigned")}
+                    /> }
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import AssignmentTable from "../components/AssignmentTable";
 import { fetchAssignmentMetrics, fetchAssignments } from "../api/assignments";
 import FailedOrders from "../components/FailedOrders";
 import Sidebar from "../components/Sidebar";
+import { IAssignment } from "@/models/Assignment";
 
 export interface AssigmentMetrics {
   totalAssigned: number;
@@ -18,15 +19,8 @@ export interface AssigmentMetrics {
 }
 
 export default function AssignmentsPage() {
-  // const { assignments, loading } = useAssignmentContext();
-  const [statusFilter, setStatusFilter] = useState("");
-  const [assignments, setAssignments] = useState([])
+  const [assignments, setAssignments] = useState<IAssignment[]>([])
   const [metrics, setMetrics] = useState<AssigmentMetrics>();
-
-  // const filteredAssignments = assignments.filter((assignment) =>
-  //   statusFilter ? assignment.status === statusFilter : true
-  // );
-  
 
   useEffect(() => {
     fetchAssignments().then(setAssignments);
@@ -60,7 +54,7 @@ export default function AssignmentsPage() {
                 </div>
                 <div className="text-2xl font-bold">
                   {
-                    assignments.filter((a: any) => a.status === "pending").length
+                    assignments.filter((a: IAssignment) => a.status === "pending").length
                   }
                 </div>
                 <div className="text-sm text-gray-500">-200 than last month</div>
@@ -72,7 +66,7 @@ export default function AssignmentsPage() {
                   <span className="text-sm text-red-500">-3%</span>
                 </div>
                 <div className="text-2xl font-bold">
-                  {assignments.filter((a: any) => a.status === "failed").length}
+                  {assignments.filter((a: IAssignment) => a.status === "failed").length}
                 </div>
                 <div className="text-sm text-gray-500">-100 than last month</div>
               </div>

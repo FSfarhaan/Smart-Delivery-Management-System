@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { fetchAssignmentMetrics } from '../api/assignments'
 
-interface AssigmentMetrics {
-    totalAssigned: number;
-    successRate: string,
-    failureReasons: [{
-      count: number,
-      reason: string;
-    }]
+interface AssignmentMetrics {
+  totalAssigned: number;
+  successRate: string;
+  failureReasons: {
+    count: number;
+    reason: string;
+  }[];
 }
 
 const FailedOrders = () => {
-    const [metrics, setMetrics] = useState<AssigmentMetrics>();
-    const [failureCount, setFailureCount] = useState(0);
-    
-    useEffect(()=> {
-        fetchAssignmentMetrics().then((data) => {
-            setMetrics(data);
-            const totalFailureCount = data.failureReasons.reduce(
-                (total: any, r: any) => total + r.count,
-                0
-              );
-              setFailureCount(totalFailureCount);
-        });
-        
-    }, [])
+  const [metrics, setMetrics] = useState<AssignmentMetrics | null>(null);
+  const [failureCount, setFailureCount] = useState(0);
+
+  useEffect(() => {
+    fetchAssignmentMetrics().then((data) => {
+      setMetrics(data);
+      const totalFailureCount: number = data.failureReasons.reduce(
+        (total: number, r: { count: number; reason: string }) => total + r.count,
+        0
+      );
+      setFailureCount(totalFailureCount);
+    });
+  }, []);
+
   return (
         <div className="bg-white p-4 rounded-lg shadow">
             <span className="text-gray-600">Total Failed Deliveries</span>

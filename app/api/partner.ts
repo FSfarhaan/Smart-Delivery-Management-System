@@ -1,6 +1,5 @@
+import { IPartner } from "@/models/Partner";
 import axios from "axios";
-
-
 
 // ✅ Fetch all partners
 export const fetchPartners = async () => {
@@ -9,13 +8,13 @@ export const fetchPartners = async () => {
 };
 
 // ✅ Add a new partner
-export const addPartner = async (partnerData: any) => {
+export const addPartner = async (partnerData: IPartner) => {
   const response = await axios.post(`/api/partners`, partnerData);
   return response.data;
 };
 
 // ✅ Update partner details
-export const updatePartner = async (partnerId: string, updateData: any) => {
+export const updatePartner = async (partnerId: string, updateData: IPartner) => {
   const response = await axios.put(`/api/partners/${partnerId}`, updateData);
   return response.data;
 };

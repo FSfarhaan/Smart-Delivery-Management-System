@@ -8,7 +8,7 @@ import OrdersPieChart from "../components/StatusPie";
 import MapComponent from "../components/MapComponent";
 import FailedOrders from "../components/FailedOrders";
 import { IOrder, OrdersArea } from "@/models/Order";
-import { fetchOrders, getOrderAreas, updateOrder } from "../api/order";
+import { fetchOrders, getOrderAreas, orderProps, updateOrder } from "../api/order";
 import Sidebar from "../components/Sidebar";
 import { IPartner } from "@/models/Partner";
 import { fetchPartners } from "../api/partner";
@@ -51,11 +51,12 @@ export default function OrdersPage() {
       return;
     }
 
-    const updateData = {
-      status: selectedStatus,
-      reason: selectedStatus === "failed" ? failureReason : undefined, // Only add reason if status is "failed"
-    };
-
+    if(selectedStatus) {
+      const updateData: orderProps = {
+        status: selectedStatus,
+        reason: selectedStatus === "failed" ? failureReason : "undefined", // Only add reason if status is "failed"
+      };
+      
     // Ensure you are passing the orderNumber, not orderId
     if (!selectedOrder) return;
     console.log(selectedOrder);
@@ -87,6 +88,8 @@ export default function OrdersPage() {
         console.error("Error updating order:", error);
         // Handle error if needed
       });
+
+    }
   };
 
   const handleStatusChange = (status: string) => {
@@ -121,6 +124,7 @@ export default function OrdersPage() {
         totalAmount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+        coordinates: { lat: 0, lng: 0}
       });
       setIsAdding(true);
     }
@@ -264,7 +268,7 @@ export default function OrdersPage() {
                 <div className="text-2xl font-bold">
                   {
                     data?.orders.filter(
-                      (order: any) => order.status === "delivered"
+                      (order: IOrder) => order.status === "delivered"
                     ).length
                   }
                 </div>
@@ -279,18 +283,18 @@ export default function OrdersPage() {
                 <div className="text-2xl font-bold">
                   {
                     data?.orders.filter(
-                      (order: any) => order.status === "pending"
+                      (order: IOrder) => order.status === "pending"
                     ).length
                   }
                 </div>
                 <div className="text-sm text-gray-500">
                   {data?.orders.filter(
-                    (order: any) => order.status === "pending"
+                    (order: IOrder) => order.status === "pending"
                   ).length == 0
                     ? "Every Order is assigned"
                     : "+" +
                       data?.orders.filter(
-                        (order: any) => order.status === "pending"
+                        (order: IOrder) => order.status === "pending"
                       ).length +
                       " since last month"}
                 </div>
@@ -304,7 +308,7 @@ export default function OrdersPage() {
                 <div className="text-2xl font-bold">
                   {
                     data?.orders.filter(
-                      (order: any) => order.status === "assigned"
+                      (order: IOrder) => order.status === "assigned"
                     ).length
                   }
                 </div>
@@ -674,7 +678,7 @@ export default function OrdersPage() {
                 {partners && (
                   <PartnersTable
                     couriers={partners}
-                    openEditModal={null}
+                    openEditModal={() => {}}
                     showMinified={true}
                     closeAssignModal={closeAssignModal}
                   />

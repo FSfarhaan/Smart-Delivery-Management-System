@@ -1,8 +1,11 @@
 import { IPartner } from "@/models/Partner";
 import { createManually } from "../api/assignments";
 import mongoose from "mongoose";
+import { IAssignment } from "@/models/Assignment";
+import React from "react";
+import Error from "next/error";
 
-export default function PartnersTable({ couriers, openEditModal, showMinified, closeAssignModal }: { couriers: IPartner[] | null, openEditModal: any, showMinified: boolean, closeAssignModal: any }) {  
+export default function PartnersTable({ couriers, openEditModal, showMinified, closeAssignModal }: { couriers: IPartner[] | null, openEditModal: (partner: IPartner | null) => void, showMinified: boolean, closeAssignModal: () => void }) {  
 
   const handleClick = (courier: IPartner) => {
     showMinified ? assignManually(courier) : openEditModal(courier);
@@ -10,18 +13,18 @@ export default function PartnersTable({ couriers, openEditModal, showMinified, c
 
   const assignManually = (courier: IPartner) => {
     const oId = localStorage.getItem("selectedOrder");
-    if(oId) {
+    if(oId && courier._id) {
       const mongooseObj = new mongoose.Types.ObjectId(oId);
-      const payload = {
+      const payload: IAssignment = {
           orderId: mongooseObj,
           partnerId: courier._id,
-          timeStamp: new Date(),
+          timestamp: new Date(),
           status: "pending"
         }
-        createManually(payload).then(closeAssignModal).catch((err: any) => console.log(err));
+        createManually(payload).then(closeAssignModal).catch((err: Error) => console.log(err));
       } 
   }
-  
+
   return (
     <>
       {/* Partners List */}
@@ -62,7 +65,7 @@ export default function PartnersTable({ couriers, openEditModal, showMinified, c
             {!showMinified && <td className="text-center pr-20">{courier.metrics.completedOrders}</td> }
             {!showMinified && <td className="text-center pr-20">{courier.metrics.cancelledOrders}</td> }
             <td className="text-center pr-28">{courier.currentLoad}</td>
-            <td className="">{courier.areas.join(", ")}</td>
+            <td className="">{courier.area?.join(", ")}</td>
             
             <td className="pl-10">
               <button onClick={() => handleClick(courier)} className="bg-yellow-500 text-white px-3 py-1 rounded">

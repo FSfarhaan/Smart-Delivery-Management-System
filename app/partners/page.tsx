@@ -9,10 +9,16 @@ import { fetchPartners, getPartnersArea } from "../api/partner";
 import { IPartner, PartnersArea } from "@/models/Partner";
 import Sidebar from "../components/Sidebar";
 
+interface PartnerMetrics {
+  totalActive: number;
+  avgRating: number;
+  topAreas: string;
+}
+
 export default function PartnersPage() {
   const [data, setData] = useState<{
     partners: IPartner[];
-    metrics: any;
+    metrics: PartnerMetrics;
     areas: PartnersArea[];
   } | null>(null);
 
@@ -24,25 +30,26 @@ export default function PartnersPage() {
       try {
         const data = await fetchPartners();
   
-        const totalActive = data.filter((p: any) => p.status === "active").length;
+        const totalActive = data.filter((p: IPartner) => p.status === "active").length;
   
         const avgRating =
           data.length > 0
-            ? Math.floor(data.reduce((sum: any, p: any) => sum + p.metrics.rating, 0) / data.length)
+            ? Math.floor(data.reduce((sum: number, p: IPartner) => sum + p.metrics.rating, 0) / data.length)
             : 0;
   
         const areaCount: Record<string, number> = {};
-        data.forEach((p: any) => {
-          p.areas.forEach((area: string) => {
+        data.forEach((p: IPartner) => {
+          p.area?.forEach((area: string) => {
             areaCount[area] = (areaCount[area] || 0) + 1;
           });
         });
-  
+        
         const topAreas = Object.entries(areaCount)
           .sort((a, b) => b[1] - a[1])  // Sort by count in descending order
           .slice(0, 1)  // Get the top area
-          .map(([area]) => area);
-  
+          .map(([area]) => area)[0];  // Access the first element (top area)
+            
+            
 
         const area = await getPartnersArea();
         setData({
@@ -50,6 +57,8 @@ export default function PartnersPage() {
           metrics: { totalActive, avgRating, topAreas },
           areas: area,
         });
+
+        console.log(topAreas);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -70,7 +79,7 @@ export default function PartnersPage() {
         email: "",
         phone: "",
         status: "active",
-        areas: [],
+        area: [],
         shift: { start: "", end: "" },
         metrics: { rating: 0, completedOrders: 0, cancelledOrders: 0 },
         currentLoad: 0,
@@ -126,6 +135,10 @@ export default function PartnersPage() {
     }
   };
 
+  const closeAssignModal = () => {
+
+  }
+
   return (
     <div className="flex justify-between">
       <Sidebar pathname={"partners"}/>
@@ -172,7 +185,7 @@ export default function PartnersPage() {
                   <span className="text-gray-600">Top Areas</span>
                   <span className="text-sm text-green-500">+3</span>
                 </div>
-                <div className="text-2xl font-bold">{data?.metrics.topAreas}</div>
+                <div className="text-2xl font-bold">{data?.metrics?.topAreas ? data?.metrics?.topAreas : "Thane"}</div>
                 <div className="text-sm text-gray-500">+300 than last month</div>
               </div>
             </div>
@@ -196,7 +209,7 @@ export default function PartnersPage() {
                   couriers={data && data?.partners}
                   openEditModal={openEditModal}
                   showMinified={false}
-                  closeAssignModal={null}
+                  closeAssignModal={closeAssignModal}
                 />
               </div>
             </div>
@@ -244,11 +257,11 @@ export default function PartnersPage() {
               <select
                 multiple
                 className="border p-2 w-full mb-2"
-                value={editingPartner.areas}
+                value={editingPartner.area}
                 onChange={(e) =>
                   setEditingPartner({
                     ...editingPartner,
-                    areas: Array.from(
+                    area: Array.from(
                       e.target.selectedOptions,
                       (option) => option.value
                     ),

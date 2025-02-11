@@ -1,7 +1,6 @@
-import { Bell } from 'lucide-react'
 import React from 'react'
 
-const Navbar = (props: any) => {
+const Navbar = (props: { page : string}) => {
   return (
     <header className="md:p-6 p-4 pb-4 md:static fixed w-full z-10 bg-gray-100 shadow md:shadow-none">
         <div className="flex items-center justify-between">
