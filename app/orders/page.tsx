@@ -162,10 +162,12 @@ export default function OrdersPage() {
       ? "/api/orders"
       : `/api/orders/${editingOrder.orderNumber}`;
 
-    const { _id: _, ...orderData } = {
+    const { _id, ...orderData } = {
       ...editingOrder,
       assignedTo: editingOrder.assignedTo || null,
     };
+
+    console.log(_id);
 
     try {
       const res = await axios({

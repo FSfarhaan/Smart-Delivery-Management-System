@@ -101,8 +101,8 @@ export default function PartnersPage() {
       ? "/api/partners"
       : `/api/partners/${editingPartner._id}`;
 
-    const { _id: _, ...restData } = editingPartner;
-
+    const { _id, ...restData } = editingPartner;
+    console.log(_id);
 
     try {
       const res = await axios({
