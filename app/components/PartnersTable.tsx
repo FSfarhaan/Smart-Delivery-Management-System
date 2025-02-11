@@ -8,7 +8,12 @@ import Error from "next/error";
 export default function PartnersTable({ couriers, openEditModal, showMinified, closeAssignModal }: { couriers: IPartner[] | null, openEditModal: (partner: IPartner | null) => void, showMinified: boolean, closeAssignModal: () => void }) {  
 
   const handleClick = (courier: IPartner) => {
-    showMinified ? assignManually(courier) : openEditModal(courier);
+    if(showMinified) {
+      assignManually(courier)
+    } else {
+      openEditModal(courier)
+    }
+  
   }
 
   const assignManually = (courier: IPartner) => {

@@ -101,7 +101,7 @@ export default function PartnersPage() {
       ? "/api/partners"
       : `/api/partners/${editingPartner._id}`;
 
-    const { _id, ...restData } = editingPartner;
+    const { _id: _, ...restData } = editingPartner;
 
 
     try {

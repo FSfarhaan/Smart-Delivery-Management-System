@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { fetchAssignments } from "../api/assignments";
 import { usePathname } from "next/navigation";
 import { ObjectId } from "mongoose";
-import { IAssignment } from "@/models/Assignment";
 
 interface assignmentProps  {
     _id: string;
@@ -48,7 +47,7 @@ const AssignmentTable = () => {
     };
   
     fetchData();
-  }, [fetchAssignments, pathName]); // Include dependencies if needed
+  }, [pathName]); // Include dependencies if needed
   
   return (
     <table className="w-full">

@@ -18,10 +18,6 @@ import { ChartData } from "chart.js";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
-interface chartProps {
-
-}
-
 const OrdersPieChart = () => {
   const [data, setData] = useState<IAssignment[] | IOrder[]>([]);
   const [chartData, setChartData] = useState<ChartData<'pie'> | null>(null);
@@ -59,7 +55,7 @@ const OrdersPieChart = () => {
         },
       ],
     });
-  }, [data]); // Runs when `data` updates
+  }, [data, isAssignmentsPage]); // Runs when `data` updates
 
   return (
     <div>

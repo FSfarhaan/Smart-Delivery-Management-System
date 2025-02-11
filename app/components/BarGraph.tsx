@@ -2,8 +2,8 @@
 
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { IOrder, OrdersArea } from "@/models/Order";
-import { IPartner, PartnersArea } from "@/models/Partner";
+import { OrdersArea } from "@/models/Order";
+import { PartnersArea } from "@/models/Partner";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

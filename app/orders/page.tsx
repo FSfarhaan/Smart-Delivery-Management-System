@@ -162,7 +162,7 @@ export default function OrdersPage() {
       ? "/api/orders"
       : `/api/orders/${editingOrder.orderNumber}`;
 
-    const { _id, ...orderData } = {
+    const { _id: _, ...orderData } = {
       ...editingOrder,
       assignedTo: editingOrder.assignedTo || null,
     };

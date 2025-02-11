@@ -6,7 +6,7 @@ import PieChart from "@/app/components/PartnersPie";
 import Navbar from "./components/Navbar";
 import OrdersPieChart from "./components/StatusPie";
 import AssignmentTable from "./components/AssignmentTable";
-import MapComponent, { OrderWithCoord } from "./components/MapComponent";
+import MapComponent from "./components/MapComponent";
 import Link from "next/link";
 import Sidebar from "./components/Sidebar";
 import { IOrder } from "@/models/Order";
