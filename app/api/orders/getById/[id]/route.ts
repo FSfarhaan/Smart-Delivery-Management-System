@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
-import { ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
-export async function GET(req: Request, { params }: { params: { id: ObjectId } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     await connectDB();
-    const { id }  = await params;
-    if (!id) {
+    
+    // Ensure the ID is valid before querying
+    if (!params.id) {
       return NextResponse.json({ message: "Missing Order ID" }, { status: 400 });
     }
 
-    const order = await Order.findById(id);
+    // Convert ID to ObjectId before querying MongoDB
+    const order = await Order.findById(new Types.ObjectId(params.id));
     if (!order) {
       return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
@@ -22,3 +24,4 @@ export async function GET(req: Request, { params }: { params: { id: ObjectId } }
     return NextResponse.json({ message: "Error fetching Order", error }, { status: 500 });
   }
 }
+
