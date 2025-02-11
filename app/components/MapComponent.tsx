@@ -2,8 +2,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon, LatLngExpression } from 'leaflet'; // No need for custom Icon import
-import MarkerClusterGroup from 'react-leaflet-cluster'; // For clustering markers
+import MarkerCluster from 'react-leaflet-markercluster'; // For clustering markers
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+
 
 // Define your MapComponent accepting orders as a prop
 const MapComponent = ({ orders }: { orders: any[] }) => {
@@ -23,7 +25,7 @@ const MapComponent = ({ orders }: { orders: any[] }) => {
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
       {/* Add MarkerClusterGroup to group markers at the same location */}
-      <MarkerClusterGroup>
+      <MarkerCluster>
         {validOrders.map((order) => (
           <Marker
             key={order.orderNumber}
@@ -48,7 +50,7 @@ const MapComponent = ({ orders }: { orders: any[] }) => {
             </Popup>
           </Marker>
         ))}
-      </MarkerClusterGroup>
+      </MarkerCluster>
     </MapContainer>
   );
 };
