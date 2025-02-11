@@ -25,7 +25,7 @@ const BarChart = ({ data, type }: { data: any[], type: string }) => {
     plugins: {
       title: {
         display: true,
-        text: type === "partners" ? "Partners per area": "Orders per area"
+        text: type === "partners" ? "Partners per area (0th index)": "Orders per area"
       },
     },
     scales: {

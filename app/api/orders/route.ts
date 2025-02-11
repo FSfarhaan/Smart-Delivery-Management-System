@@ -6,9 +6,11 @@ import Assignment from "@/models/Assignment";
 
 async function autoAssignPartner(orderArea: string) {
   await connectDB();
+  
   const availablePartners = await Partner.find({
-    areas: orderArea,
+    areas: { $in: [orderArea] },
     currentLoad: { $lt: 3 },
+    status: "active"
   }).sort({ currentLoad: 1, "metrics.rating": -1 });
 
   return availablePartners.length ? availablePartners[0] : null;

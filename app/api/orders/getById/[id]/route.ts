@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
+import { ObjectId } from "mongoose";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: ObjectId } }) {
   try {
     await connectDB();
     const { id }  = await params;

@@ -19,7 +19,7 @@ const MapComponent = ({ orders }: { orders: any[] }) => {
   }, [loadedOrders]);
 
   return (
-    <MapContainer center={[34.0536909, -118.242766]} zoom={3} style={{ width: '100%', height: "15rem" }}>
+    <MapContainer center={[19.0760, 72.8777]} zoom={7} style={{ width: '100%', height: "15rem" }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
       {/* Add MarkerClusterGroup to group markers at the same location */}

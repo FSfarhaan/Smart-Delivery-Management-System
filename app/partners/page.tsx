@@ -202,7 +202,7 @@ export default function PartnersPage() {
             </div>
           </main>
 
-          {/* Right Sidebar */}
+          {/* Right Section */}
           <div className="flex-1 h-screen gap-6 md:px-6 px-4 flex flex-col pb-24 md:pb-16">
             <PieChart showText={false} />
             {data && <BarGraph data={data?.areas} type={"partners"} />}
@@ -255,10 +255,12 @@ export default function PartnersPage() {
                   })
                 }
               >
-                <option value="Los Angeles">Los Angeles</option>
-                <option value="San Francisco">San Francisco</option>
-                <option value="San Francisco">Houston</option>
-                <option value="Chicago">Chicago</option>
+                <option value="Thane">Thane</option>
+                <option value="Dombivli">Dombivli</option>
+                <option value="Vashi">Vashi</option>
+                <option value="Borivali">Borivali</option>
+                <option value="Mulund">Mulund</option>
+                <option value="Dadar">Dadar</option>
               </select>
 
               <h3 className="text-lg font-semibold mt-4">Shift Timing</h3>

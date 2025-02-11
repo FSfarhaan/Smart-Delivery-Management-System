@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { fetchAssignments } from "../api/assignments";
 import { usePathname } from "next/navigation";
+import { ObjectId } from "mongoose";
 
 interface assignmentProps  {
     _id: string;
@@ -16,7 +17,7 @@ const AssignmentTable = () => {
   const [orderNumbers, setOrderNumbers] = useState<string[]>([]); // Explicitly set as an array of strings
   const pathName = usePathname();
 
-  const getOrderNumber = async (id: string) => {
+  const getOrderNumber = async (id: ObjectId) => {
     try {
       const res = await axios.get(`/api/orders/getById/${id}`);
       return res.data.orderNumber; // Assuming `orderNumber` is inside `res.data`
