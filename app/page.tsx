@@ -19,9 +19,9 @@ const Dashboard: FC = () => {
     fetchOrdersLoc()
       .then((data: any) => {
         setOrders(data);
-        const totalAmount = data.reduce((total: number, order: any) => total + order.totalAmount, 0);
+        const totalAmount = Math.floor (data.reduce((total: number, order: any) => total + order.totalAmount, 0));
         const filteredArr = data.filter((da: any) => da.status === "delivered");
-        const receivedAmount = filteredArr.reduce((total: number, order: any) => total + order.totalAmount, 0);
+        const receivedAmount = Math.floor( filteredArr.reduce((total: number, order: any) => total + order.totalAmount, 0));
         setTotalAmount(totalAmount);
         setReceivedAmount(receivedAmount);
       })

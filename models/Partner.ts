@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 // 1️⃣ Define TypeScript Interface
 export interface IPartner {
-  _id: string;
+  _id: Types.ObjectId | null;
   name: string;
   email: string;
   phone: string;

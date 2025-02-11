@@ -13,3 +13,8 @@ export const fetchAssignmentMetrics = async () => {
   const response = await axios.get(`${API_BASE_URL}/api/assignments/metrics`);
   return response.data;
 };
+
+export const createManually = async (data: any) => {
+  const response  = await axios.post(`${API_BASE_URL}/api/assignments/manuallyAssign`, data);
+  return response.data;
+}

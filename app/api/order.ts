@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Types } from "mongoose";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://192.168.162.209:3000";
 
@@ -20,8 +21,8 @@ export const createOrder = async (orderData: any) => {
 };
 
 // ✅ Update order status
-export const updateOrder = async (orderId: string, updateData: any) => {
-  const response = await axios.put(`${API_BASE_URL}/api/orders/${orderId}`, updateData);
+export const updateOrder = async (id: Types.ObjectId, updateData: any) => {
+  const response = await axios.put(`${API_BASE_URL}/api/orders/${id}`, updateData);
   return response.data;
 };
 

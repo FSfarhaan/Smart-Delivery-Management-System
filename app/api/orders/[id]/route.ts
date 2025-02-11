@@ -3,13 +3,15 @@ import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
 import Assignment from "@/models/Assignment";
 import Partner from "@/models/Partner";
+import { Types } from "mongoose";
 
 // ✅ UPDATE Order by ID
-export async function PUT(req: Request, props: { params: Promise<{ id: string }> }) {
+export async function PUT(req: Request, props: { params: Promise<{ id: Types.ObjectId }> }) {
   const params = await props.params;
   try {
     await connectDB();
     const body = await req.json();
+    console.log("Id to ye hai" + params.id);
     const order = await Order.findById(params.id);
 
     if (!order) return NextResponse.json({ message: "Order not found" }, { status: 404 });
@@ -43,8 +45,6 @@ export async function PUT(req: Request, props: { params: Promise<{ id: string }>
     return NextResponse.json({ message: "Error updating order", error }, { status: 500 });
   }
 }
-  
-  
   
 
 // ✅ DELETE Order by ID

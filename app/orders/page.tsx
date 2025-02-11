@@ -1,18 +1,25 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PartnersTable from "@/app/components/PartnersTable";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-import PieChart from "@/app/components/PartnersPie";
 import BarGraph from "@/app/components/BarGraph";
 import OrderTable from "../components/OrderTable";
-import dynamic from "next/dynamic";
 import OrdersPieChart from "../components/StatusPie";
 import MapComponent from "../components/MapComponent";
 import FailedOrders from "../components/FailedOrders";
 import { IOrder, OrdersArea } from "@/models/Order";
-import { fetchOrders, getOrderAreas } from "../api/order";
+import { fetchOrders, getOrderAreas, updateOrder } from "../api/order";
 import Sidebar from "../components/Sidebar";
+import { IPartner } from "@/models/Partner";
+import { fetchPartners } from "../api/partner";
+import { Types } from "mongoose";
+import PartnersTable from "../components/PartnersTable";
+
+interface FilterOptions {
+  status: string[];
+  areas: string[];
+  date: string;
+}
 
 export default function OrdersPage() {
   const [data, setData] = useState<{
@@ -22,13 +29,80 @@ export default function OrdersPage() {
 
   const [editingOrder, setEditingOrder] = useState<IOrder | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filteredData, setFilteredData] = useState<IOrder[]>([]);
+  const [filters, setFilters] = useState<FilterOptions>({
+    status: [],
+    areas: [],
+    date: "",
+  });
+
+  const [assignModal, setAssignModal] = useState(false);
+  const [markAsModal, setMarkAsModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Types.ObjectId>();
+  const [partners, setPartners] = useState<IPartner[]>();
+
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [failureReason, setFailureReason] = useState("");
+
+  const saveStatus = () => {
+    if (selectedStatus === "failed" && !failureReason) {
+      alert("Please provide a failure reason.");
+      return;
+    }
+
+    const updateData = {
+      status: selectedStatus,
+      reason: selectedStatus === "failed" ? failureReason : undefined, // Only add reason if status is "failed"
+    };
+
+    // Ensure you are passing the orderNumber, not orderId
+    if (!selectedOrder) return;
+    console.log(selectedOrder);
+    updateOrder(selectedOrder, updateData)
+      .then((updatedOrder) => {
+        let updatedOrders;
+        setData((prevData) => {
+          if (!prevData) return prevData; // if no data is present, return the same
+
+          // Find the updated order and replace it with the updated one
+          updatedOrders = prevData.orders.map((order) =>
+            order.orderNumber === updatedOrder.orderNumber
+              ? updatedOrder
+              : order
+          );
+
+          // Return the updated state
+          return {
+            ...prevData,
+            orders: updatedOrders,
+          };
+        });
+
+        if (updatedOrders) setFilteredData(updatedOrders);
+
+        setMarkAsModal(false);
+      })
+      .catch((error) => {
+        console.error("Error updating order:", error);
+        // Handle error if needed
+      });
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    if (status !== "failed") {
+      setFailureReason(""); // Reset failure reason when status is not "failed"
+    }
+  };
 
   useEffect(() => {
     const fetchDatas = async () => {
       const ordersData = await fetchOrders();
       const areasData = await getOrderAreas();
       setData({ orders: ordersData, area: areasData });
-    }
+      setFilteredData(ordersData);
+    };
     fetchDatas();
   }, []);
 
@@ -38,11 +112,12 @@ export default function OrdersPage() {
       setIsAdding(false);
     } else {
       setEditingOrder({
+        _id: null,
         orderNumber: "",
         customer: { name: "", phone: "", address: "" },
         area: "",
-        items: [{ name: "", quantity: 0, price: 0 }], // Corrected items to match IOrder type
-        status: "pending", // Default status set to 'pending'
+        items: [{ name: "", quantity: 0, price: 0 }],
+        status: "pending",
         totalAmount: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -51,25 +126,43 @@ export default function OrdersPage() {
     }
   };
 
+  const openAssignModal = (order: Types.ObjectId) => {
+    setAssignModal(!assignModal);
+    setSelectedOrder(order);
+    fetchPartners().then(setPartners);
+  };
+
+  const closeAssignModal = () => {
+    setAssignModal(false);
+  };
+
+  const openMarkModal = (order: Types.ObjectId) => {
+    setMarkAsModal(!markAsModal);
+    setSelectedOrder(order);
+
+    localStorage.removeItem("selectedOrder");
+    localStorage.setItem("selectedOrder", order.toString());
+  };
+
   const closeEditModal = () => {
     setEditingOrder(null);
     setIsAdding(false);
+    setAssignModal(false);
   };
 
   const saveOrder = async () => {
     if (!editingOrder) return;
-  
+
     const method = isAdding ? "post" : "put";
     const url = isAdding
       ? "/api/orders"
       : `/api/orders/${editingOrder.orderNumber}`;
-  
-    // Ensure assignedTo is either a valid ID or null
-    const { orderNumber, ...orderData } = {
+
+    const { _id, ...orderData } = {
       ...editingOrder,
       assignedTo: editingOrder.assignedTo || null,
     };
-  
+
     try {
       const res = await axios({
         method,
@@ -77,23 +170,23 @@ export default function OrdersPage() {
         data: orderData,
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (res.status === 200 || res.status === 201) {
         setData((prevData) =>
           prevData
             ? {
                 ...prevData,
                 orders: isAdding
-                  ? [...prevData.orders, editingOrder] // Add new order
+                  ? [...prevData.orders, editingOrder]
                   : prevData.orders.map((order) =>
                       order.orderNumber === editingOrder.orderNumber
                         ? editingOrder
                         : order
-                    ), // Update existing order
+                    ),
               }
             : null
         );
-  
+
         closeEditModal();
       }
     } catch (error) {
@@ -101,17 +194,58 @@ export default function OrdersPage() {
     }
   };
 
-  
+  const openFilterModal = () => {
+    setIsFilterOpen(true);
+  };
+
+  const handleFilterChange = (key: keyof FilterOptions, value: string) => {
+    setFilters((prevFilters) => {
+      const prevValue = Array.isArray(prevFilters[key]) ? prevFilters[key] : [];
+      const updatedValues = prevValue.includes(value)
+        ? prevValue.filter((v) => v !== value) // Remove if already selected
+        : [...prevValue, value]; // Add if not selected
+
+      return { ...prevFilters, [key]: updatedValues };
+    });
+  };
+
+  const applyFilters = () => {
+    if (!data) return;
+
+    // Always start filtering from the original orders list
+    let filtered = [...data.orders];
+
+    if (filters.status.length > 0) {
+      filtered = filtered.filter((order) =>
+        filters.status.includes(order.status)
+      );
+    }
+
+    if (filters.areas.length > 0) {
+      filtered = filtered.filter((order) => filters.areas.includes(order.area));
+    }
+
+    if (filters.date) {
+      filtered = filtered.filter(
+        (order) =>
+          new Date(order.createdAt).toISOString().split("T")[0] === filters.date
+      );
+    }
+
+    // Update the filtered data
+    setFilteredData(filtered);
+    console.log(data.orders);
+    console.log(filteredData);
+  };
 
   return (
     <div className="flex justify-between">
-      <Sidebar pathname={"orders"}/>
+      <Sidebar pathname={"orders"} />
       <div className="md:ml-64 w-full overflow-y-scroll md:overflow-y-hidden">
         <Navbar page="Orders" />
 
         <div className="flex justify-between md:mt-0 mt-16 md:flex-row flex-col">
           <main className="md:p-6 md:w-3/4 md:pt-0 md:pr-0 p-4">
-
             <div className="md:grid md:grid-cols-4 gap-4 mb-6 max-w-full overflow-x-auto flex-nowrap flex">
               <div className="bg-white p-4 rounded-lg shadow whitespace-nowrap">
                 <div className="flex items-center justify-between mb-2">
@@ -129,8 +263,9 @@ export default function OrdersPage() {
                 </div>
                 <div className="text-2xl font-bold">
                   {
-                    data?.orders.filter((order: any) => order.status === "delivered")
-                      .length
+                    data?.orders.filter(
+                      (order: any) => order.status === "delivered"
+                    ).length
                   }
                 </div>
                 <div className="text-sm text-gray-500">-1 than last month</div>
@@ -143,17 +278,20 @@ export default function OrdersPage() {
                 </div>
                 <div className="text-2xl font-bold">
                   {
-                    data?.orders.filter((order: any) => order.status === "pending")
-                      .length
+                    data?.orders.filter(
+                      (order: any) => order.status === "pending"
+                    ).length
                   }
                 </div>
                 <div className="text-sm text-gray-500">
-                  {data?.orders.filter((order: any) => order.status === "pending")
-                    .length == 0
+                  {data?.orders.filter(
+                    (order: any) => order.status === "pending"
+                  ).length == 0
                     ? "Every Order is assigned"
                     : "+" +
-                      data?.orders.filter((order: any) => order.status === "pending")
-                        .length +
+                      data?.orders.filter(
+                        (order: any) => order.status === "pending"
+                      ).length +
                       " since last month"}
                 </div>
               </div>
@@ -165,8 +303,9 @@ export default function OrdersPage() {
                 </div>
                 <div className="text-2xl font-bold">
                   {
-                    data?.orders.filter((order: any) => order.status === "assigned")
-                      .length
+                    data?.orders.filter(
+                      (order: any) => order.status === "assigned"
+                    ).length
                   }
                 </div>
                 <div className="text-sm text-gray-500">+3 than last month</div>
@@ -177,9 +316,11 @@ export default function OrdersPage() {
               <div className="bg-white p-4 rounded-lg shadow flex flex-col ">
                 <div>
                   <h2 className="text-lg font-semibold">Total Orders</h2>
-                  <h5 className="text-gray-500 md:text-sm text-xs mb-3">Here can be the seen the location of all orders.</h5>
+                  <h5 className="text-gray-500 md:text-sm text-xs mb-3">
+                    Here can be the seen the location of all orders.
+                  </h5>
                 </div>
-                <div className="flex-1" style={{zIndex: 1}}>
+                <div className="flex-1" style={{ zIndex: 1 }}>
                   {data && <MapComponent orders={data?.orders} />}
                 </div>
               </div>
@@ -189,35 +330,50 @@ export default function OrdersPage() {
               <div className="flex justify-between">
                 <div>
                   <h2 className="text-lg font-semibold">Total Orders</h2>
-                  <h5 className="text-gray-500 md:text-sm text-xs mb-3">Here can be seen the complete list of orders.</h5>
+                  <h5 className="text-gray-500 md:text-sm text-xs mb-3">
+                    Here can be seen the complete list of orders.
+                  </h5>
                 </div>
-                <button
-                  onClick={() => openEditModal(null)}
-                  className="bg-green-500 text-white px-3 py-1 rounded mb-4 text-sm"
-                >
-                  Add Order
-                </button>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => openEditModal(null)}
+                    className="bg-green-500 text-white px-3 py-1 rounded mb-4 text-sm"
+                  >
+                    Add Order
+                  </button>
+
+                  <button
+                    onClick={openFilterModal}
+                    className="bg-green-500 text-white px-3 py-1 rounded mb-4 text-sm"
+                  >
+                    Filters
+                  </button>
+                </div>
               </div>
               <div className="w-full overflow-x-scroll md:overflow-x-hidden">
-                <OrderTable orders={data?.orders || []} type="orders" openEditModal={openEditModal}/>
+                <OrderTable
+                  orders={filteredData || []}
+                  openAssignModal={openAssignModal}
+                  openMarkModal={openMarkModal}
+                />
               </div>
             </div>
           </main>
 
           {/* Right section */}
-          <div className="flex-1 h-screen gap-6 md:px-6 px-4 flex flex-col pb-24 md:pb-16">
+          <div className="flex-1 gap-6 md:px-6 px-4 flex flex-col pb-24 md:pb-16">
             <FailedOrders />
 
             <div className="bg-white p-4 rounded-lg shadow">
               <OrdersPieChart />
             </div>
-            {data && <BarGraph data={data?.area} type={"orders"} /> }
+            {data && <BarGraph data={data?.area} type={"orders"} />}
           </div>
         </div>
 
         {editingOrder && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-            <div className="bg-white p-6 rounded-lg w-96">
+            <div className="bg-white p-6 rounded-lg overflow-scroll md:h-auto md:w-auto md:overflow-hidden w-[80vw] h-[50vh]">
               <h2 className="text-xl font-bold mb-4">
                 {isAdding ? "Add Order" : "Edit Order"}
               </h2>
@@ -229,7 +385,7 @@ export default function OrdersPage() {
                 onChange={(e) =>
                   setEditingOrder({
                     ...editingOrder,
-                    orderNumber: e.target.value
+                    orderNumber: e.target.value,
                   })
                 }
               />
@@ -238,11 +394,14 @@ export default function OrdersPage() {
               <input
                 className="border p-2 w-full mb-2"
                 placeholder="Customer Name"
-                value={""}
+                value={editingOrder.customer.name}
                 onChange={(e) =>
                   setEditingOrder({
                     ...editingOrder,
-                    customer: { ...editingOrder.customer, name: e.target.value },
+                    customer: {
+                      ...editingOrder.customer,
+                      name: e.target.value,
+                    },
                   })
                 }
               />
@@ -253,7 +412,10 @@ export default function OrdersPage() {
                 onChange={(e) =>
                   setEditingOrder({
                     ...editingOrder,
-                    customer: { ...editingOrder.customer, phone: e.target.value },
+                    customer: {
+                      ...editingOrder.customer,
+                      phone: e.target.value,
+                    },
                   })
                 }
               />
@@ -285,37 +447,6 @@ export default function OrdersPage() {
                 }
               />
 
-              {/* Order Status */}
-              <select
-                className="border p-2 w-full mb-2"
-                value={editingOrder.status}
-                onChange={(e) =>
-                  setEditingOrder({
-                    ...editingOrder,
-                    status: e.target.value as IOrder["status"],
-                  })
-                }
-              >
-                <option value="pending">Pending</option>
-                <option value="assigned">Assigned</option>
-                <option value="picked">Picked</option>
-                <option value="delivered">Delivered</option>
-                <option value="failed">Failed</option>
-              </select>
-
-              {/* Assigned Partner */}
-              <input
-                className="border p-2 w-full mb-2"
-                placeholder="Assigned To (Partner ID)"
-                value={editingOrder.assignedTo || ""}
-                onChange={(e) =>
-                  setEditingOrder({
-                    ...editingOrder,
-                    assignedTo: e.target.value || undefined, // Set undefined if empty
-                  })
-                }
-              />
-
               {/* Items */}
               <h3 className="text-lg font-semibold mt-4">Order Items</h3>
               {editingOrder.items.map((item, index) => (
@@ -334,7 +465,7 @@ export default function OrdersPage() {
                     type="number"
                     className="border p-2 w-full mb-1"
                     placeholder="Quantity"
-                    value={item.quantity}
+                    value={item.quantity == 0 ? "" : item.quantity}
                     onChange={(e) => {
                       const newItems = [...editingOrder.items];
                       newItems[index].quantity = Number(e.target.value);
@@ -345,7 +476,7 @@ export default function OrdersPage() {
                     type="number"
                     className="border p-2 w-full"
                     placeholder="Price"
-                    value={item.price}
+                    value={item.price == 0 ? "" : item.price}
                     onChange={(e) => {
                       const newItems = [...editingOrder.items];
                       newItems[index].price = Number(e.target.value);
@@ -374,7 +505,7 @@ export default function OrdersPage() {
                 type="number"
                 className="border p-2 w-full mb-2"
                 placeholder="Total Amount"
-                value={editingOrder.totalAmount}
+                value={editingOrder.totalAmount == 0 ? "" : editingOrder.totalAmount}
                 onChange={(e) =>
                   setEditingOrder({
                     ...editingOrder,
@@ -396,6 +527,164 @@ export default function OrdersPage() {
                   className="bg-green-500 text-white px-3 py-1 rounded"
                 >
                   Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter Modal */}
+        {isFilterOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+            <div className="bg-white p-6 rounded-lg shadow-lg overflow-scroll md:h-auto md:w-auto md:overflow-hidden w-[80vw] h-[50vh]">
+              <h2 className="text-lg font-semibold mb-4">Filter Orders</h2>
+
+              {/* Status Filter */}
+              <div className="mb-4">
+                <h3 className="font-medium">Status:</h3>
+                {["delivered", "assigned", "pending", "failed"].map(
+                  (status) => (
+                    <label key={status} className="flex items-center mt-2">
+                      <input
+                        type="checkbox"
+                        checked={filters.status.includes(status)}
+                        onChange={() => handleFilterChange("status", status)}
+                      />
+                      <span className="ml-2">{status}</span>
+                    </label>
+                  )
+                )}
+              </div>
+
+              {/* Area Filter */}
+              <div className="mb-4">
+                <h3 className="font-medium">Areas:</h3>
+                {data?.area.map(({ area }) => (
+                  <label key={area} className="flex items-center mt-2">
+                    <input
+                      type="checkbox"
+                      checked={filters.areas.includes(area)}
+                      onChange={() => handleFilterChange("areas", area)}
+                    />
+                    <span className="ml-2">{area}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Date Filter */}
+              <div className="mb-4">
+                <h3 className="font-medium">Date:</h3>
+                <input
+                  type="date"
+                  value={filters.date}
+                  onChange={(e) =>
+                    setFilters({ ...filters, date: e.target.value })
+                  }
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-between">
+                <button
+                  onClick={() => {
+                    applyFilters();
+                    setIsFilterOpen(false); // Close modal after applying filters
+                  }}
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={() => setIsFilterOpen(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Assign Modal */}
+        {markAsModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+            <div className="bg-white p-6 rounded-lg shadow-lg overflow-scroll md:h-auto md:w-auto md:overflow-hidden w-[80vw] h-[50vh]">
+              <h2 className="text-lg font-semibold mb-4">Mark Order</h2>
+
+              {/* Order Status Filter */}
+              <div className="mb-4">
+                <h3 className="font-medium">Status:</h3>
+                {["delivered", "pending", "failed"].map((status) => (
+                  <label key={status} className="flex items-center mt-2">
+                    <input
+                      type="radio"
+                      name="status"
+                      checked={selectedStatus === status}
+                      onChange={() => handleStatusChange(status)}
+                    />
+                    <span className="ml-2">{status}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Failure Reason (only visible if "failed" is selected) */}
+              {selectedStatus === "failed" && (
+                <div className="mb-4">
+                  <h3 className="font-medium">Failure Reason:</h3>
+                  <textarea
+                    value={failureReason}
+                    onChange={(e) => setFailureReason(e.target.value)}
+                    placeholder="Enter failure reason"
+                    className="border p-2 rounded w-full"
+                  />
+                </div>
+              )}
+
+              {/* Buttons */}
+              <div className="flex justify-between">
+                <button
+                  onClick={() => {
+                    saveStatus();
+                    setMarkAsModal(false); // Close modal after saving
+                  }}
+                  disabled={
+                    !selectedStatus ||
+                    (selectedStatus === "failed" && !failureReason)
+                  }
+                  className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setMarkAsModal(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {assignModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="overflow-scroll md:h-auto md:w-auto md:overflow-hidden w-[80vw] h-[50vh]">
+                {partners && (
+                  <PartnersTable
+                    couriers={partners}
+                    openEditModal={null}
+                    showMinified={true}
+                    closeAssignModal={closeAssignModal}
+                  />
+                )}
+
+                <button
+                  onClick={closeEditModal}
+                  className="bg-gray-500 text-white px-3 py-1 rounded"
+                >
+                  Cancel
                 </button>
               </div>
             </div>

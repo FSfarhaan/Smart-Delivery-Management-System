@@ -1,18 +1,13 @@
 import React from 'react';
+import { IOrder } from '@/models/Order';
+import { Types } from 'mongoose';
 
-interface IOrder {
-  orderNumber: string;
-  customer: { name: string; phone: string; address: string };
-  area: string;
-  items: { name: string; quantity: number; price: number }[];
-  status: "pending" | "assigned" | "picked" | "delivered" | "failed";
-  assignedTo?: string; // Partner ID
-  totalAmount: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+const OrderTable = ({ orders, openAssignModal, openMarkModal }: { orders: IOrder[], openAssignModal: any, openMarkModal: any }) => {
 
-const OrderTable = ({ orders, type, openEditModal }: { orders: IOrder[], type: string, openEditModal: any }) => {
+  const openModal  = (assigned: boolean, order: Types.ObjectId | null) => {
+    if(assigned) openMarkModal(order);
+    else openAssignModal(order);
+  }
   return (
     <table className="w-full">
       <thead>
@@ -23,6 +18,7 @@ const OrderTable = ({ orders, type, openEditModal }: { orders: IOrder[], type: s
           <th className="text-left pb-4">Customer</th>
           <th className="text-right pb-4">Total</th>
           <th className="text-right pb-4">Assigned To</th>
+          <th className="text-right pb-4">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -42,7 +38,7 @@ const OrderTable = ({ orders, type, openEditModal }: { orders: IOrder[], type: s
                       ? "bg-green-100 text-green-700" // Green for delivered
                       : "bg-red-100 text-red-700"
                   }`}
-                  
+
               >
                 {order.status}
               </span>
@@ -51,6 +47,9 @@ const OrderTable = ({ orders, type, openEditModal }: { orders: IOrder[], type: s
             <td className='pr-10'>{order.customer.name}</td>
             <td className="text-right">${order.totalAmount.toFixed(2)}</td>
             <td className="text-right pl-10">{order.assignedTo || 'N/A'}</td>
+            <td className="pl-10">
+              <button onClick={() => openModal(order.assignedTo? true : false, order._id)} className={`${order.assignedTo? "bg-yellow-500" : "bg-orange-500"} text-white px-3 py-1 rounded`}>{order.assignedTo ? "Mark" : "Assign"}</button>
+            </td>
           </tr>
         ))}
       </tbody>

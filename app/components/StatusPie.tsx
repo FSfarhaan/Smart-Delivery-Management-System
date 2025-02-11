@@ -47,7 +47,7 @@ const OrdersPieChart = () => {
         {
           label: isAssignmentsPage ? "Assignment Status" : "Order Status",
           data: Object.values(statusCount),
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF5733"],
+          backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384", "#4BC0C0", "#FF5733"],
           hoverOffset: 4,
         },
       ],

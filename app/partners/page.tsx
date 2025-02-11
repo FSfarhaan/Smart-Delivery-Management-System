@@ -65,7 +65,7 @@ export default function PartnersPage() {
       setIsAdding(false);
     } else {
       setEditingPartner({
-        _id: "",
+        _id: null,
         name: "",
         email: "",
         phone: "",
@@ -193,8 +193,10 @@ export default function PartnersPage() {
               </div>
               <div className="w-full overflow-x-scroll md:overflow-x-hidden">
                 <PartnersTable
-                  couriers={data?.partners || []}
+                  couriers={data && data?.partners}
                   openEditModal={openEditModal}
+                  showMinified={false}
+                  closeAssignModal={null}
                 />
               </div>
             </div>
@@ -209,7 +211,7 @@ export default function PartnersPage() {
 
         {editingPartner && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg">
+            <div className="bg-white p-6 rounded-lg overflow-scroll md:h-auto md:w-auto md:overflow-hidden w-[80vw] h-[50vh]">
               <h2 className="text-xl font-bold mb-4">
                 {isAdding ? "Add Partner" : "Edit Partner"}
               </h2>

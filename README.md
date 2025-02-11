@@ -18,11 +18,11 @@ Managing orders, tracking deliveries, and ensuring seamless logistics has never 
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/FSfarhaan/SmartDelivery.git
+    git clone https://github.com/FSfarhaan/Smart-Delivery-Management-System
     ```
 2. **Navigate to the project directory**:
     ```bash
-    cd SmartDelivery
+    cd Smart-Delivery-Management-System
     ```
 3. **Install dependencies**:
     ```bash

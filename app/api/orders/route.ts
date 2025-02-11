@@ -3,7 +3,6 @@ import { connectDB } from "@/lib/db";
 import Order from "@/models/Order";
 import Partner from "@/models/Partner";
 import Assignment from "@/models/Assignment";
-import { getBatchCoordinates } from "@/utils/geocode";
 
 async function autoAssignPartner(orderArea: string) {
   await connectDB();
@@ -34,6 +33,7 @@ export async function POST(req: Request) {
   try {
     await connectDB();
     const body = await req.json();
+
 
     const assignedPartner = await autoAssignPartner(body.area);
 
