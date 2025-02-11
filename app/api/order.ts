@@ -1,38 +1,38 @@
 import axios from "axios";
 import { Types } from "mongoose";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://192.168.162.209:3000";
+
 
 // ✅ Fetch all orders
 export const fetchOrders = async () => {
-  const response = await axios.get(`${API_BASE_URL}/api/orders`);
+  const response = await axios.get(`/api/orders`);
   return response.data;
 };
 
 export const fetchOrdersLoc = async () => {
-  const response = await axios.get(`${API_BASE_URL}/api/orders/getOrdersLoc`);
+  const response = await axios.get(`/api/orders/getOrdersLoc`);
   return response.data
 }
 
 // ✅ Create a new order
 export const createOrder = async (orderData: any) => {
-  const response = await axios.post(`${API_BASE_URL}/api/orders`, orderData);
+  const response = await axios.post(`/api/orders`, orderData);
   return response.data;
 };
 
 // ✅ Update order status
 export const updateOrder = async (id: Types.ObjectId, updateData: any) => {
-  const response = await axios.put(`${API_BASE_URL}/api/orders/${id}`, updateData);
+  const response = await axios.put(`/api/orders/${id}`, updateData);
   return response.data;
 };
 
 // ✅ Delete an order
 export const deleteOrder = async (orderId: string) => {
-  const response = await axios.delete(`${API_BASE_URL}/api/orders/${orderId}`);
+  const response = await axios.delete(`/api/orders/${orderId}`);
   return response.data;
 };
 
 export const getOrderAreas = async () => {
-  const response = await axios.get(`${API_BASE_URL}/api/orders/getAreas`);
+  const response = await axios.get(`/api/orders/getAreas`);
   return response.data;
 }
