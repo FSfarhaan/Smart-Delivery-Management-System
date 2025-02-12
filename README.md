@@ -54,6 +54,8 @@ Managing orders, tracking deliveries, and ensuring seamless logistics has never 
 
 🚀 **The project is deployed on vercel and is live on!:** [Website](https://smart-delivery-management-system-rho.vercel.app)
 
+Note: I had to remove the Map Component from the code due to its reliance on front-end APIs. While attempting to implement Server-Side Rendering (SSR) with Next.js, I encountered multiple issues at the time of deployment, as Next.js repeatedly rejected the component on the backend. Despite my efforts to resolve the problem, I was unable to get it functioning correctly within the SSR framework.
+
 ---
 
 ## 📚 API Documentation
