@@ -26,15 +26,19 @@ const MapComponent = ({ orders }: { orders: IOrder[] }) => {
     setLoadedOrders(orders);
   }, [orders]);
 
+  // Use useMemo to filter orders only if `isClient` is true
+  const validOrders = useMemo(() => {
+    if (isClient) {
+      return loadedOrders?.filter(
+        (order) => order.coordinates?.lat && order.coordinates?.lng
+      );
+    }
+    return []; // Return an empty array when `isClient` is false
+  }, [loadedOrders, isClient]);
+
   if (!isClient) {
     return null; // Or a loading spinner, depending on your use case
   }
-
-  const validOrders = useMemo(() => {
-    return loadedOrders?.filter(
-      (order) => order.coordinates?.lat && order.coordinates?.lng
-    );
-  }, [loadedOrders]);
 
   return (
     <MapContainer
