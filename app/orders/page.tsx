@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import BarGraph from "@/app/components/BarGraph";
 import OrderTable from "../components/OrderTable";
 import OrdersPieChart from "../components/StatusPie";
-import MapComponent from "../components/MapComponent";
+
 import FailedOrders from "../components/FailedOrders";
 import { IOrder, OrdersArea } from "@/models/Order";
 import { fetchOrders, getOrderAreas, orderProps, updateOrder } from "../api/order";
@@ -331,7 +331,7 @@ export default function OrdersPage() {
                   </h5>
                 </div>
                 <div className="flex-1" style={{ zIndex: 1 }}>
-                  {data && <MapComponent orders={data?.orders} />}
+                  
                 </div>
               </div>
             </div>

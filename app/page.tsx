@@ -6,7 +6,7 @@ import PieChart from "@/app/components/PartnersPie";
 import Navbar from "./components/Navbar";
 import OrdersPieChart from "./components/StatusPie";
 import AssignmentTable from "./components/AssignmentTable";
-import MapComponent from "./components/MapComponent";
+
 import Link from "next/link";
 import Sidebar from "./components/Sidebar";
 import { IOrder } from "@/models/Order";
@@ -97,10 +97,7 @@ const Dashboard: FC = () => {
                   </Link>
                 </div>
                 <div className="flex-1" style={{zIndex: 1}}>
-                  {orders &&
-                    <MapComponent
-                      orders={orders?.filter((o: IOrder) => o.status === "assigned")}
-                    /> }
+                  
                 </div>
               </div>
             </div>
