@@ -21,7 +21,7 @@ Managing orders, tracking deliveries, and ensuring seamless logistics has never 
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/FSfarhaan/Smart-Delivery-Management-System
+    git clone https://github.com/FSfarhaan/Smart-Delivery-Management-System.git
     ```
 2. **Navigate to the project directory**:
     ```bash
@@ -51,6 +51,8 @@ Managing orders, tracking deliveries, and ensuring seamless logistics has never 
 ![Screenshot4](screenshots/ss4.png)
 ![Screenshot5](screenshots/ss5.jpg)
 ![Screenshot6](screenshots/ss6.jpg)
+
+🚀 **The project is deployed on vercel and is live on!:** [Website](https://smart-delivery-management-system-rho.vercel.app)
 
 ---
 
