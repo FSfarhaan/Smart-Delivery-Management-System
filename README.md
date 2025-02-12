@@ -398,7 +398,8 @@ Manage order assignments to partners.
 ## 📢 Contributing
 
 I welcome contributions! Feel free to submit issues or pull requests to improve this project.
-PS: This project was a nightmare. It's my first time using Typescript and it really gave me a lot of pain while resolving the errors😅.
+
+PS: This project was a nightmare. I am not much experienced with Typescript and it really gave me a lot of pain while resolving the errors😅.
 
 ## 💌 Contact
 
