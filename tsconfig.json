@@ -33,7 +33,6 @@
     "**/*.tsx",
     "app/api/partners/[id]",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
