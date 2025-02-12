@@ -19,10 +19,16 @@ export interface OrderWithCoord {
 
 const MapComponent = ({ orders }: { orders: IOrder[] }) => {
   const [loadedOrders, setLoadedOrders] = useState(orders);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     setLoadedOrders(orders);
   }, [orders]);
+
+  if (!isClient) {
+    return null; // Or a loading spinner, depending on your use case
+  }
 
   const validOrders = useMemo(() => {
     return loadedOrders?.filter(
