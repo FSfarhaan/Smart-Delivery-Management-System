@@ -7,7 +7,7 @@ export async function GET() {
   try {
     await connectDB();
     const areas = await Partner.aggregate([
-      { $group: { _id: "$areas", count: { $sum: 1 } } },
+      { $group: { _id: "$area", count: { $sum: 1 } } },
       { $project: { _id: 0, area: "$_id", count: 1 } },
     ]);
 

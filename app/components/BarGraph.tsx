@@ -10,7 +10,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const BarChart = ({ data, type }: { data: OrdersArea[] | PartnersArea[], type: string }) => {
   // Prepare the data for Chart.js
   const chartData = {
-    labels: data.map((item) => item.area[0]), // Areas as labels
+    labels: data.map((item) => item.area), // Areas as labels
     datasets: [
       {
         label: type === "partners" ? "Partners Count" : "Orders count",

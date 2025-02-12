@@ -15,7 +15,7 @@ export interface IPartner {
 
 export interface PartnersArea {
   count: number;
-  area: string[];
+  area: string;
 }
 
 // 2️⃣ Define Mongoose Schema

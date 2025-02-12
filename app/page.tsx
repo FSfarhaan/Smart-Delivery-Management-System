@@ -26,10 +26,6 @@ const Dashboard: FC = () => {
         setTotalAmount(totalAmount);
         setReceivedAmount(receivedAmount);
 
-        console.log(data);
-        console.log(totalAmount);
-        console.log(receivedAmount);
-
       })
       .catch((error) => console.log("Error fetching orders:", error));
 
@@ -95,9 +91,6 @@ const Dashboard: FC = () => {
                   <Link href="/orders">
                     <button className="text-green-700 font-bold">View all</button>
                   </Link>
-                </div>
-                <div className="flex-1" style={{zIndex: 1}}>
-                  
                 </div>
               </div>
             </div>

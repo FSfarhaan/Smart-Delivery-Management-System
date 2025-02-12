@@ -1,13 +1,11 @@
 import axios from 'axios';
 
-const isClient = typeof window !== 'undefined';
-
 export const getBatchCoordinates = async (areas: string[]) => {
   try {
     // Make all requests in parallel using Promise.all
     const promises = areas.map(async (area: string) => {
       try {
-        const coords = isClient ? await getCoordinates(area) : null;
+        const coords = await getCoordinates(area);
         return { area, coords };
       } catch (err) {
         console.error("Error geocoding area:", area, err);
@@ -31,14 +29,9 @@ export const getBatchCoordinates = async (areas: string[]) => {
 };
 
 export const getCoordinates = async (location: string) => {
-
-  if (!isClient) {
-    return null;
-  }
-
   try {
     const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
-    
+    // const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
     const data = await res.data;
     if (data.length > 0) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };

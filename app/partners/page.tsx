@@ -19,7 +19,7 @@ export default function PartnersPage() {
   const [data, setData] = useState<{
     partners: IPartner[];
     metrics: PartnerMetrics;
-    areas: PartnersArea[];
+    area: PartnersArea[];
   } | null>(null);
 
   const [editingPartner, setEditingPartner] = useState<IPartner | null>(null);
@@ -55,10 +55,9 @@ export default function PartnersPage() {
         setData({
           partners: data,
           metrics: { totalActive, avgRating, topAreas },
-          areas: area,
+          area: area,
         });
 
-        console.log(topAreas);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -218,7 +217,7 @@ export default function PartnersPage() {
           {/* Right Section */}
           <div className="flex-1 h-screen gap-6 md:px-6 px-4 flex flex-col pb-24 md:pb-16">
             <PieChart showText={false} />
-            {data && <BarGraph data={data?.areas} type={"partners"} />}
+            {data && <BarGraph data={data?.area} type={"partners"} />}
           </div>
         </div>
 

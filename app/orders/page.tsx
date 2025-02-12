@@ -59,7 +59,6 @@ export default function OrdersPage() {
       
     // Ensure you are passing the orderNumber, not orderId
     if (!selectedOrder) return;
-    console.log(selectedOrder);
     updateOrder(selectedOrder, updateData)
       .then((updatedOrder) => {
         let updatedOrders;
@@ -78,6 +77,7 @@ export default function OrdersPage() {
             ...prevData,
             orders: updatedOrders,
           };
+
         });
 
         if (updatedOrders) setFilteredData(updatedOrders);
@@ -105,6 +105,7 @@ export default function OrdersPage() {
       const areasData = await getOrderAreas();
       setData({ orders: ordersData, area: areasData });
       setFilteredData(ordersData);
+      console.log(ordersData, areasData);
     };
     fetchDatas();
   }, []);
@@ -244,8 +245,6 @@ export default function OrdersPage() {
 
     // Update the filtered data
     setFilteredData(filtered);
-    console.log(data.orders);
-    console.log(filteredData);
   };
 
   return (
@@ -322,20 +321,6 @@ export default function OrdersPage() {
               </div>
             </div>
 
-            <div className="mb-6">
-              <div className="bg-white p-4 rounded-lg shadow flex flex-col ">
-                <div>
-                  <h2 className="text-lg font-semibold">Total Orders</h2>
-                  <h5 className="text-gray-500 md:text-sm text-xs mb-3">
-                    Here can be the seen the location of all orders.
-                  </h5>
-                </div>
-                <div className="flex-1" style={{ zIndex: 1 }}>
-                  
-                </div>
-              </div>
-            </div>
-
             <div className="rounded-lg shadow bg-white p-4">
               <div className="flex justify-between">
                 <div>
@@ -374,10 +359,10 @@ export default function OrdersPage() {
           <div className="flex-1 gap-6 md:px-6 px-4 flex flex-col pb-24 md:pb-16">
             <FailedOrders />
 
+            {data && <BarGraph data={data?.area} type={"orders"} />}
             <div className="bg-white p-4 rounded-lg shadow">
               <OrdersPieChart />
             </div>
-            {data && <BarGraph data={data?.area} type={"orders"} />}
           </div>
         </div>
 
