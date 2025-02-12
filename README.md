@@ -42,6 +42,16 @@ Managing orders, tracking deliveries, and ensuring seamless logistics has never 
 - **Backend**: Next.js
 - **Database**: MongoDB (with Mongoose ODM)
 
+## 📸 Screenshots
+
+<!-- Add screenshots of your app here. Example: -->
+![Screenshot1](screenshots/ss1.png)
+![Screenshot2](screenshots/ss2.png)
+![Screenshot3](screenshots/ss3.png)
+![Screenshot4](screenshots/ss4.png)
+![Screenshot5](screenshots/ss5.jpg)
+![Screenshot6](screenshots/ss6.jpg)
+
 ---
 
 ## 📚 API Documentation
@@ -384,6 +394,7 @@ Manage order assignments to partners.
 ## 📢 Contributing
 
 I welcome contributions! Feel free to submit issues or pull requests to improve this project.
+PS: This project was a nightmare. It's my first time using Typescript and it really gave me a lot of pain while resolving the errors😅.
 
 ## 💌 Contact
 
