@@ -140,13 +140,17 @@ export default function OrdersPage() {
     setAssignModal(false);
   };
 
+  
   const openMarkModal = (order: Types.ObjectId) => {
     setMarkAsModal(!markAsModal);
     setSelectedOrder(order);
-
-    localStorage.removeItem("selectedOrder");
-    localStorage.setItem("selectedOrder", order.toString());
+  
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("selectedOrder");
+      localStorage.setItem("selectedOrder", order.toString());
+    }
   };
+  
 
   const closeEditModal = () => {
     setEditingOrder(null);

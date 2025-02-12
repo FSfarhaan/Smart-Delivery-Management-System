@@ -63,7 +63,7 @@ export default function AssignmentsPage() {
               <div className="bg-white p-4 rounded-lg shadow whitespace-nowrap">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-600">Failed</span>
-                  <span className="text-sm text-red-500">-3%</span>
+                  <span className="text-sm text-red-500">+3%</span>
                 </div>
                 <div className="text-2xl font-bold">
                   {assignments.filter((a: IAssignment) => a.status === "failed").length}

@@ -17,18 +17,26 @@ export default function PartnersTable({ couriers, openEditModal, showMinified, c
   }
 
   const assignManually = (courier: IPartner) => {
+    if (typeof window === "undefined") return; // Ensure code runs only on the client
+  
     const oId = localStorage.getItem("selectedOrder");
-    if(oId && courier._id) {
-      const mongooseObj = new mongoose.Types.ObjectId(oId);
-      const payload: IAssignment = {
+    if (oId && courier._id) {
+      try {
+        const mongooseObj = new mongoose.Types.ObjectId(oId);
+        const payload: IAssignment = {
           orderId: mongooseObj,
           partnerId: courier._id,
           timestamp: new Date(),
-          status: "pending"
-        }
-        createManually(payload).then(closeAssignModal).catch((err: Error) => console.log(err));
-      } 
-  }
+          status: "pending",
+        };
+        createManually(payload)
+          .then(closeAssignModal)
+          .catch((err: Error) => console.log(err));
+      } catch (error) {
+        console.error("Error creating ObjectId:", error);
+      }
+    }
+  };
 
   return (
     <>
